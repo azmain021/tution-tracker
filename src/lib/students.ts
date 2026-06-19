@@ -180,13 +180,18 @@ export const archiveStudent = async (studentId: string) => {
  */
 export const deleteStudent = async (studentId: string) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('students')
       .delete()
-      .eq('id', studentId);
+      .eq('id', studentId)
+      .select();
 
     if (error) {
       return { success: false, error: error.message };
+    }
+
+    if (!data || data.length === 0) {
+      return { success: false, error: 'Student not found or you do not have permission to delete this student (RLS policy).' };
     }
 
     return { success: true };
