@@ -159,13 +159,18 @@ export const updateStudent = async (
  */
 export const archiveStudent = async (studentId: string) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('students')
       .update({ is_archived: true, updated_at: new Date().toISOString() })
-      .eq('id', studentId);
+      .eq('id', studentId)
+      .select();
 
     if (error) {
       return { success: false, error: error.message };
+    }
+
+    if (!data || data.length === 0) {
+      return { success: false, error: 'Student not found or you do not have permission to archive this student (RLS policy).' };
     }
 
     return { success: true };

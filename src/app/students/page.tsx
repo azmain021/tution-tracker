@@ -72,6 +72,9 @@ export default function StudentsPage() {
       const result = await archiveStudent(studentId);
       if (result.success && user) {
         await fetchStudents(user.id);
+      } else if (!result.success) {
+        alert('Error: ' + result.error);
+        console.error('Archive error:', result.error);
       }
     }
   };
