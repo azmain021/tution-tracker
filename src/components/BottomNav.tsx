@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, Users, BarChart3 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Home, Users, BarChart3, LogOut } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -12,7 +13,13 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const isActive = (path: string) => pathname.startsWith(path);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
 
   return (
     <>
@@ -32,6 +39,13 @@ export default function BottomNav() {
             <span className="text-xs mt-1">{label}</span>
           </Link>
         ))}
+        <button
+          onClick={handleLogout}
+          className="flex flex-col items-center justify-center w-full h-full transition-colors text-text-muted hover:text-red-500"
+        >
+          <LogOut size={24} />
+          <span className="text-xs mt-1">Logout</span>
+        </button>
       </nav>
 
       {/* ── Desktop: fixed left sidebar ── */}
@@ -60,9 +74,16 @@ export default function BottomNav() {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="px-6 py-5 border-t border-border">
-          <p className="text-xs text-text-muted">© 2025 TutorTrack</p>
+        {/* Footer with Logout */}
+        <div className="px-4 py-5 border-t border-border">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-medium transition-all text-text-muted hover:text-red-500 hover:bg-bg-card-hover mb-2"
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
+          <p className="text-xs text-text-muted px-4">© 2025 TutorTrack</p>
         </div>
       </aside>
     </>
