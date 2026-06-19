@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Edit2, Trash2, Plus } from 'lucide-react';
+import { Edit2, Trash2, Plus, Archive } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getAllStudents, archiveStudent, deleteStudent } from '@/lib/students';
 import { Student } from '@/types';
@@ -81,6 +81,9 @@ export default function StudentsPage() {
       const result = await deleteStudent(studentId);
       if (result.success && user) {
         await fetchStudents(user.id);
+      } else if (!result.success) {
+        alert('Error: ' + result.error);
+        console.error('Delete error:', result.error);
       }
     }
   };
@@ -139,8 +142,9 @@ export default function StudentsPage() {
                     <button
                       onClick={() => handleArchive(student.id)}
                       className="text-text-muted hover:text-text-primary transition-colors p-2"
+                      title="Archive student"
                     >
-                      <Trash2 size={18} />
+                      <Archive size={18} />
                     </button>
                   </div>
                 </div>
